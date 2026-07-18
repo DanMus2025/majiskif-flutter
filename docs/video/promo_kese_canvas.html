@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>KESE publicité canvas</title>
+  <style>
+    html, body { margin: 0; width: 100%; height: 100%; background: #06161d; overflow: hidden; }
+    canvas { display: block; width: 100vw; height: 100vh; }
+    video { display: none; }
+  </style>
+</head>
+<body>
+  <canvas id="stage" width="1920" height="1080"></canvas>
+  <video id="mobile" src="KESE-demo-mobile.mp4" muted loop playsinline></video>
+  <script>
+    const canvas = document.getElementById('stage');
+    const ctx = canvas.getContext('2d');
+    const mobile = document.getElementById('mobile');
+    const assets = {};
+    const W = canvas.width;
+    const H = canvas.height;
+
+    function loadImage(name, src) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => { assets[name] = img; resolve(); };
+        img.onerror = () => resolve();
+        img.src = src;
+      });
+    }
+
+    function roundRect(x, y, w, h, r) {
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.arcTo(x + w, y, x + w, y + h, r);
+      ctx.arcTo(x + w, y + h, x, y + h, r);
+      ctx.arcTo(x, y + h, x, y, r);
+      ctx.arcTo(x, y, x + w, y, r);
+      ctx.closePath();
+    }
+
+    function fillRound(x, y, w, h, r, fill, stroke) {
+      roundRect(x, y, w, h, r);
+      ctx.fillStyle = fill;
+      ctx.fill();
+      if (stroke) {
+        ctx.strokeStyle = stroke;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+
+    function text(str, x, y, size, weight = '700', color = '#fff', maxWidth = 900, lineHeight = size * 1.25) {
+      ctx.fillStyle = color;
+      ctx.font = `${weight} ${size}px Arial, Segoe UI, sans-serif`;
+      const words = String(str).split(' ');
+      let line = '';
+      for (const word of words) {
+        const test = line ? line + ' ' + word : word;
+        if (ctx.measureText(test).width > maxWidth && line) {
+          ctx.fillText(line, x, y);
+          y += lineHeight;
+          line = word;
+        } else {
+          line = test;
+        }
+      }
+      if (line) ctx.fillText(line, x, y);
+      return y + lineHeight;
+    }
+
+    function centerText(str, y, size, weight = '900', color = '#fff') {
+      ctx.fillStyle = color;
+      ctx.font = `${weight} ${size}px Arial, Segoe UI, sans-serif`;
+      ctx.textAlign = 'center';
+      ctx.fillText(str, W / 2, y);
+      ctx.textAlign = 'left';
+    }
+
+    function background() {
+      const g = ctx.createLinearGradient(0, 0, W, H);
+      g.addColorStop(0, '#041017');
+      g.addColorStop(.5, '#073b48');
+      g.addColorStop(1, '#0c5d6d');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+      ctx.globalAlpha = .32;
+      ctx.fillStyle = '#1692a2';
+      ctx.beginPath(); ctx.arc(310, 190, 300, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = .18;
+      ctx.fillStyle = '#f5c85d';
+      ctx.beginPath(); ctx.arc(1650, 860, 340, 0, Math.PI * 2); ctx.fill();
+      ctx.globalAlpha = 1;
+    }
+
+    function logo(img, x, y, s) {
+      fillRound(x, y, s, s, 26, 'rgba(255,255,255,.14)', 'rgba(255,255,255,.24)');
+      if (img) ctx.drawImage(img, x + 12, y + 12, s - 24, s - 24);
+    }
+
+    function phoneFrame(x, y, w, h) {
+      fillRound(x, y, w, h, 58, '#070b10', 'rgba(255,255,255,.18)');
+      fillRound(x + 20, y + 20, w - 40, h - 40, 40, '#101820');
+      if (mobile.readyState >= 2) {
+        ctx.save();
+        roundRect(x + 22, y + 22, w - 44, h - 44, 38);
+        ctx.clip();
+        ctx.drawImage(mobile, x + 22, y + 22, w - 44, h - 44);
+        ctx.restore();
+      }
+      fillRound(x + w / 2 - 76, y + 16, 152, 20, 10, '#020507');
+    }
+
+    function chip(label, x, y) {
+      ctx.font = '800 25px Arial';
+      const w = ctx.measureText(label).width + 42;
+      fillRound(x, y, w, 56, 28, 'rgba(255,255,255,.15)', 'rgba(255,255,255,.25)');
+      ctx.fillStyle = '#fff';
+      ctx.fillText(label, x + 21, y + 37);
+      return w;
+    }
+
+    function printer(t) {
+      const x = 1260, y = 310;
+      const progress = Math.min(1, Math.max(0, (t % 8) / 4));
+      const receiptY = y - 250 + progress * 390;
+      fillRound(x + 70, receiptY, 410, 520, 5, '#ffffff');
+      ctx.fillStyle = '#13252b';
+      ctx.font = '900 28px Courier New';
+      ctx.textAlign = 'center';
+      ctx.fillText('KESE SHOP', x + 275, receiptY + 54);
+      ctx.textAlign = 'left';
+      ctx.font = '22px Courier New';
+      const rows = [
+        'Ticket #000128',
+        'Client: Client Demo',
+        '----------------------',
+        'Riz 25 kg       22.00',
+        'Huile 5 L       11.00',
+        '----------------------',
+        'TOTAL        33.00 USD',
+        'Paye         33.00 USD',
+        'Merci pour votre confiance',
+      ];
+      rows.forEach((r, i) => ctx.fillText(r, x + 110, receiptY + 105 + i * 38));
+      fillRound(x, y + 390, 560, 210, 34, '#e8eef1');
+      fillRound(x + 70, y + 458, 420, 32, 16, '#101820');
+    }
+
+    function syncGraphic(t) {
+      const cx = 1500, cy = 540;
+      const devices = [
+        ['Android', 1250, 260],
+        ['Desktop', 1610, 290],
+        ['Web', 1280, 750],
+        ['Cloud', 1595, 760],
+      ];
+      ctx.strokeStyle = `rgba(255,255,255,${.35 + .25 * Math.sin(t * 4)})`;
+      ctx.lineWidth = 5;
+      for (const [, x, y] of devices) {
+        ctx.beginPath();
+        ctx.moveTo(cx, cy);
+        ctx.lineTo(x + 75, y + 60);
+        ctx.stroke();
+      }
+      fillRound(cx - 170, cy - 95, 340, 190, 95, '#fff');
+      ctx.fillStyle = '#073b48';
+      ctx.font = '900 42px Arial';
+      ctx.textAlign = 'center';
+      ctx.fillText('KESE Cloud', cx, cy + 14);
+      ctx.textAlign = 'left';
+      for (const [label, x, y] of devices) {
+        fillRound(x, y, 150, 118, 24, 'rgba(255,255,255,.16)', 'rgba(255,255,255,.26)');
+        ctx.fillStyle = '#fff';
+        ctx.font = '900 24px Arial';
+        ctx.fillText(label, x + 25, y + 68);
+      }
+    }
+
+    function drawScene(index, localT) {
+      background();
+      ctx.globalAlpha = 1;
+      if (index === 0) {
+        logo(assets.kese, 90, 90, 120);
+        text('D-Square Technologies présente', 235, 135, 28, '800', '#b9edf1');
+        text('KESE', 90, 320, 112, '900');
+        text('Votre assistante commerciale intelligente', 90, 440, 62, '900', '#fff', 990);
+        text('Gérez ventes, stocks, factures, caisse, équipes et synchronisation cloud dans une seule solution.', 90, 575, 32, '700', 'rgba(255,255,255,.9)', 1050);
+        let x = 90; ['Desktop', 'Web', 'Android', 'Cloud + Offline'].forEach(c => { x += chip(c, x, 720) + 16; });
+        phoneFrame(1320, 85, 500, 900);
+      } else if (index === 1) {
+        text('Activation simple', 90, 230, 70, '900');
+        text('Commencez localement, connectez ensuite l’entreprise au cloud, puis rattachez les autres appareils avec la clé entreprise.', 90, 340, 34, '700', 'rgba(255,255,255,.9)', 1000);
+        let x = 90; ['Licence', 'Entreprise', 'Utilisateurs', 'Appareils'].forEach(c => { x += chip(c, x, 575) + 16; });
+        phoneFrame(1320, 85, 500, 900);
+      } else if (index === 2) {
+        text('Produits et stocks maîtrisés', 90, 210, 68, '900');
+        text('Créez les catégories, ajoutez les produits, suivez le stock initial, les mouvements et les alertes.', 90, 320, 34, '700', 'rgba(255,255,255,.9)', 960);
+        ['Catégories', 'Produits', 'Stock initial', 'Alertes'].forEach((label, i) => {
+          const x = 90 + (i % 2) * 430, y = 540 + Math.floor(i / 2) * 180;
+          fillRound(x, y, 390, 140, 24, 'rgba(255,255,255,.14)', 'rgba(255,255,255,.24)');
+          text(label, x + 30, y + 85, 34, '900', '#fff', 330);
+        });
+        phoneFrame(1320, 85, 500, 900);
+      } else if (index === 3) {
+        text('Vendez plus vite', 90, 230, 72, '900');
+        text('Panier, client, remise, paiement, crédit, ticket et facture : KESE accompagne toute la vente.', 90, 345, 36, '700', 'rgba(255,255,255,.9)', 980);
+        let x = 90; ['Panier', 'Paiement', 'Crédit', 'Facture'].forEach(c => { x += chip(c, x, 590) + 16; });
+        phoneFrame(1320, 85, 500, 900);
+      } else if (index === 4) {
+        text('Simulation d’impression POS', 90, 240, 70, '900');
+        text('Préparez tickets et factures pour les ventes en boutique, sur téléphone ou sur poste de caisse.', 90, 350, 34, '700', 'rgba(255,255,255,.9)', 900);
+        printer(localT);
+      } else if (index === 5) {
+        text('Caisse, bénéfices et rapports', 90, 210, 68, '900');
+        text('Suivez les ventes, les paiements, les dépenses, les dettes clients et les opérations de chaque utilisateur.', 90, 320, 34, '700', 'rgba(255,255,255,.9)', 960);
+        ['Caisse', 'Bénéfices', 'Dépenses', 'Rapports'].forEach((label, i) => {
+          const x = 1080 + (i % 2) * 330, y = 300 + Math.floor(i / 2) * 220;
+          fillRound(x, y, 290, 170, 26, 'rgba(255,255,255,.15)', 'rgba(255,255,255,.25)');
+          text(label, x + 30, y + 100, 33, '900', '#fff', 240);
+        });
+      } else if (index === 6) {
+        text('Tous vos appareils connectés', 90, 245, 68, '900');
+        text('Android, Desktop et Web peuvent partager les données de l’entreprise selon les accès autorisés.', 90, 355, 34, '700', 'rgba(255,255,255,.9)', 900);
+        syncGraphic(localT);
+      } else {
+        logo(assets.dtech, 740, 150, 140);
+        logo(assets.kese, 1040, 150, 140);
+        centerText('KESE', 430, 118, '900');
+        centerText('Gérez votre entreprise avec intelligence', 550, 58, '900');
+        centerText('Développé par D-Square Technologies', 660, 36, '800', 'rgba(255,255,255,.92)');
+        centerText('CEO & Founder : Musagara Daniel', 720, 34, '800', 'rgba(255,255,255,.88)');
+        centerText('danielmusagara@gmail.com · +243 971 238 634 · WhatsApp disponible', 825, 30, '800', '#b9edf1');
+      }
+    }
+
+    async function init() {
+      await Promise.all([
+        loadImage('dtech', '../../assets/branding/logo-dtech.png'),
+        loadImage('kese', '../../assets/branding/logo-kese.png'),
+      ]);
+      await mobile.play().catch(() => {});
+      const start = performance.now();
+      function frame(now) {
+        const t = (now - start) / 1000;
+        const index = Math.min(7, Math.floor(t / 8));
+        drawScene(index, t - index * 8);
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    window.recordPromo = async function(durationMs = 65000) {
+      await init();
+      const stream = canvas.captureStream(30);
+      const types = [
+        'video/webm;codecs=vp8',
+        'video/webm;codecs=vp9',
+        'video/webm',
+      ];
+      const mimeType = types.find(type => MediaRecorder.isTypeSupported(type)) || '';
+      const recorder = mimeType
+        ? new MediaRecorder(stream, { mimeType })
+        : new MediaRecorder(stream);
+      const chunks = [];
+      recorder.ondataavailable = (event) => { if (event.data.size) chunks.push(event.data); };
+      recorder.start(1000);
+      await new Promise(resolve => setTimeout(resolve, durationMs));
+      recorder.stop();
+      await new Promise(resolve => recorder.onstop = resolve);
+      const blob = new Blob(chunks, { type: 'video/webm' });
+      const buffer = await blob.arrayBuffer();
+      return Array.from(new Uint8Array(buffer));
+    };
+
+    init();
+  </script>
+</body>
+</html>

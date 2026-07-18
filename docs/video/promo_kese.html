@@ -1,0 +1,443 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KESE - Vidéo publicitaire</title>
+  <style>
+    :root {
+      --green: #0c5d6d;
+      --green-dark: #073b48;
+      --teal: #1692a2;
+      --ink: #10251d;
+      --soft: #f4faf8;
+      --gold: #f5c85d;
+      --white: #ffffff;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      font-family: Arial, "Segoe UI", sans-serif;
+      background: #06161d;
+      color: var(--white);
+    }
+    .stage {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 16% 18%, rgba(22,146,162,.34), transparent 28%),
+        radial-gradient(circle at 86% 78%, rgba(245,200,93,.2), transparent 28%),
+        linear-gradient(135deg, #041017 0%, #073b48 48%, #0c5d6d 100%);
+    }
+    .scene {
+      position: absolute;
+      inset: 0;
+      padding: 70px 86px;
+      display: grid;
+      grid-template-columns: 1fr 660px;
+      gap: 70px;
+      opacity: 0;
+      transform: translateY(36px);
+      animation: scene 64s linear forwards;
+    }
+    .scene.s1 { animation-delay: 0s; }
+    .scene.s2 { animation-delay: 8s; }
+    .scene.s3 { animation-delay: 16s; }
+    .scene.s4 { animation-delay: 24s; }
+    .scene.s5 { animation-delay: 32s; }
+    .scene.s6 { animation-delay: 40s; }
+    .scene.s7 { animation-delay: 48s; }
+    .scene.s8 { animation-delay: 56s; }
+    @keyframes scene {
+      0%, 11% { opacity: 1; transform: translateY(0); }
+      13%, 100% { opacity: 0; transform: translateY(-28px); }
+    }
+    .brand-row {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      margin-bottom: 48px;
+    }
+    .brand-logo {
+      width: 116px;
+      height: 116px;
+      padding: 14px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.22);
+      object-fit: contain;
+    }
+    .eyebrow {
+      font-size: 24px;
+      font-weight: 800;
+      color: #b9edf1;
+      letter-spacing: 0;
+    }
+    h1 {
+      margin: 0;
+      font-size: 92px;
+      line-height: .96;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+    h2 {
+      margin: 0 0 24px;
+      font-size: 58px;
+      line-height: 1.05;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+    p {
+      margin: 0 0 24px;
+      font-size: 30px;
+      line-height: 1.38;
+      font-weight: 650;
+      color: rgba(255,255,255,.9);
+    }
+    .chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 18px;
+      margin-top: 34px;
+    }
+    .chip {
+      padding: 16px 22px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.13);
+      border: 1px solid rgba(255,255,255,.24);
+      font-size: 24px;
+      font-weight: 850;
+    }
+    .phone {
+      width: 520px;
+      height: 930px;
+      justify-self: center;
+      align-self: center;
+      border-radius: 58px;
+      padding: 22px;
+      background: linear-gradient(145deg, #101820, #05090d);
+      border: 8px solid rgba(255,255,255,.16);
+      box-shadow: 0 40px 90px rgba(0,0,0,.45);
+      position: relative;
+    }
+    .phone:before {
+      content: "";
+      position: absolute;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 150px;
+      height: 22px;
+      border-radius: 999px;
+      background: #03070a;
+      z-index: 2;
+    }
+    .phone video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 40px;
+      background: #0b1116;
+    }
+    .panel {
+      align-self: center;
+      padding: 44px;
+      border-radius: 28px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.2);
+      box-shadow: 0 30px 80px rgba(0,0,0,.24);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 22px;
+      margin-top: 34px;
+    }
+    .tile {
+      min-height: 154px;
+      padding: 28px;
+      border-radius: 24px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.2);
+      font-size: 28px;
+      font-weight: 900;
+      display: flex;
+      align-items: end;
+    }
+    .sync {
+      position: relative;
+      width: 620px;
+      height: 620px;
+      justify-self: center;
+      align-self: center;
+    }
+    .cloud {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 340px;
+      height: 190px;
+      border-radius: 95px;
+      background: rgba(255,255,255,.94);
+      color: var(--green-dark);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 42px;
+      font-weight: 900;
+      box-shadow: 0 26px 70px rgba(0,0,0,.25);
+    }
+    .device {
+      position: absolute;
+      width: 150px;
+      height: 118px;
+      border-radius: 22px;
+      background: rgba(255,255,255,.14);
+      border: 1px solid rgba(255,255,255,.24);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      font-weight: 900;
+    }
+    .d1 { left: 40px; top: 40px; }
+    .d2 { right: 40px; top: 70px; }
+    .d3 { left: 90px; bottom: 60px; }
+    .d4 { right: 80px; bottom: 42px; }
+    .beam {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 4px;
+      height: 250px;
+      transform-origin: top center;
+      background: linear-gradient(#ffffff, transparent);
+      opacity: .58;
+      animation: pulse 1.8s ease-in-out infinite;
+    }
+    .b1 { transform: rotate(-48deg); }
+    .b2 { transform: rotate(45deg); }
+    .b3 { transform: rotate(-140deg); }
+    .b4 { transform: rotate(135deg); }
+    @keyframes pulse { 50% { opacity: .16; } }
+    .printer {
+      width: 620px;
+      align-self: center;
+      justify-self: center;
+      position: relative;
+    }
+    .printer-body {
+      height: 220px;
+      border-radius: 34px;
+      background: linear-gradient(180deg, #f8fafb, #cfd8dd);
+      box-shadow: 0 40px 100px rgba(0,0,0,.38);
+      position: relative;
+      z-index: 2;
+    }
+    .slot {
+      position: absolute;
+      left: 70px;
+      right: 70px;
+      top: 74px;
+      height: 32px;
+      border-radius: 999px;
+      background: #101820;
+    }
+    .receipt {
+      position: absolute;
+      left: 105px;
+      top: 92px;
+      width: 410px;
+      height: 540px;
+      padding: 34px;
+      background: #fff;
+      color: #13252b;
+      border-radius: 4px;
+      font-family: "Courier New", monospace;
+      font-size: 20px;
+      line-height: 1.28;
+      box-shadow: 0 20px 60px rgba(0,0,0,.25);
+      transform: translateY(-430px);
+      animation: print 7s ease-in-out infinite;
+    }
+    @keyframes print {
+      0% { transform: translateY(-430px); }
+      42%, 100% { transform: translateY(40px); }
+    }
+    .receipt h3 {
+      margin: 0 0 12px;
+      font-size: 28px;
+      text-align: center;
+    }
+    .final {
+      grid-template-columns: 1fr;
+      text-align: center;
+      place-items: center;
+    }
+    .final .logos {
+      display: flex;
+      gap: 32px;
+      justify-content: center;
+      margin-bottom: 40px;
+    }
+    .final img {
+      width: 132px;
+      height: 132px;
+      object-fit: contain;
+      border-radius: 28px;
+      background: rgba(255,255,255,.12);
+      padding: 14px;
+    }
+    .contact {
+      margin-top: 36px;
+      font-size: 28px;
+      font-weight: 850;
+      color: rgba(255,255,255,.92);
+    }
+  </style>
+</head>
+<body>
+  <main class="stage">
+    <section class="scene s1">
+      <div>
+        <div class="brand-row">
+          <img class="brand-logo" src="../../assets/branding/logo-kese.png" />
+          <div>
+            <div class="eyebrow">D-Square Technologies présente</div>
+            <h1>KESE</h1>
+          </div>
+        </div>
+        <h2>Votre assistante commerciale intelligente</h2>
+        <p>Une solution moderne pour gérer les ventes, les stocks, les factures, la caisse, les équipes et la synchronisation cloud.</p>
+        <div class="chips">
+          <div class="chip">Desktop</div>
+          <div class="chip">Web</div>
+          <div class="chip">Android</div>
+          <div class="chip">Cloud + Offline</div>
+        </div>
+      </div>
+      <div class="phone">
+        <video src="KESE-demo-mobile.mp4" autoplay muted loop playsinline></video>
+      </div>
+    </section>
+
+    <section class="scene s2">
+      <div class="panel">
+        <h2>Activez. Travaillez. Synchronisez.</h2>
+        <p>KESE permet de commencer localement, puis de connecter l’entreprise au cloud lorsque l’adresse serveur est disponible.</p>
+        <div class="chips">
+          <div class="chip">Licence</div>
+          <div class="chip">Entreprise</div>
+          <div class="chip">Utilisateurs</div>
+          <div class="chip">Appareils</div>
+        </div>
+      </div>
+      <div class="phone">
+        <video src="KESE-demo-mobile.mp4#t=10" autoplay muted loop playsinline></video>
+      </div>
+    </section>
+
+    <section class="scene s3">
+      <div>
+        <h2>Gérez vos produits et vos stocks</h2>
+        <p>Créez les catégories, ajoutez les produits, suivez les entrées, les sorties, les seuils d’alerte et les mouvements de stock.</p>
+        <div class="grid">
+          <div class="tile">Catégories</div>
+          <div class="tile">Produits</div>
+          <div class="tile">Stock initial</div>
+          <div class="tile">Alertes</div>
+        </div>
+      </div>
+      <div class="panel">
+        <h2>Exemple</h2>
+        <p>Riz local 25 kg<br>Huile végétale 5 L<br>Stock mis à jour automatiquement après vente.</p>
+      </div>
+    </section>
+
+    <section class="scene s4">
+      <div class="panel">
+        <h2>Vendez plus vite</h2>
+        <p>Sélectionnez les produits, validez le panier, choisissez le client, encaissez et laissez KESE générer le ticket et la facture.</p>
+        <div class="chips">
+          <div class="chip">Panier</div>
+          <div class="chip">Paiement</div>
+          <div class="chip">Crédit</div>
+          <div class="chip">Facture</div>
+        </div>
+      </div>
+      <div class="phone">
+        <video src="KESE-demo-mobile.mp4#t=30" autoplay muted loop playsinline></video>
+      </div>
+    </section>
+
+    <section class="scene s5">
+      <div>
+        <h2>Simulation d’impression POS</h2>
+        <p>KESE prépare les tickets et factures pour accompagner les ventes en boutique, sur téléphone ou sur poste de caisse.</p>
+      </div>
+      <div class="printer">
+        <div class="receipt">
+          <h3>KESE SHOP</h3>
+          Ticket #000128<br>
+          Client: Client Demo<br>
+          ----------------------<br>
+          Riz 25 kg&nbsp;&nbsp;&nbsp; 22.00<br>
+          Huile 5 L&nbsp;&nbsp; 11.00<br>
+          ----------------------<br>
+          TOTAL&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 33.00 USD<br>
+          Payé&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 33.00 USD<br>
+          Merci pour votre confiance
+        </div>
+        <div class="printer-body"><div class="slot"></div></div>
+      </div>
+    </section>
+
+    <section class="scene s6">
+      <div class="panel">
+        <h2>Caisse, rapports et suivi</h2>
+        <p>Suivez les ventes, les paiements, les bénéfices, les dépenses, les dettes clients et les opérations de chaque utilisateur.</p>
+      </div>
+      <div class="grid">
+        <div class="tile">Caisse</div>
+        <div class="tile">Bénéfices</div>
+        <div class="tile">Dépenses</div>
+        <div class="tile">Rapports</div>
+      </div>
+    </section>
+
+    <section class="scene s7">
+      <div>
+        <h2>Synchronisation cloud</h2>
+        <p>Vos appareils restent connectés : téléphone, desktop et web peuvent partager les données de l’entreprise selon les accès autorisés.</p>
+      </div>
+      <div class="sync">
+        <div class="beam b1"></div><div class="beam b2"></div><div class="beam b3"></div><div class="beam b4"></div>
+        <div class="device d1">Android</div>
+        <div class="device d2">Desktop</div>
+        <div class="device d3">Web</div>
+        <div class="device d4">Cloud</div>
+        <div class="cloud">KESE Cloud</div>
+      </div>
+    </section>
+
+    <section class="scene s8 final">
+      <div>
+        <div class="logos">
+          <img src="../../assets/branding/logo-dtech.png" />
+          <img src="../../assets/branding/logo-kese.png" />
+        </div>
+        <h1>KESE</h1>
+        <h2>Gérez votre entreprise avec intelligence</h2>
+        <p>Développé par D-Square Technologies<br>CEO & Founder : Musagara Daniel</p>
+        <div class="contact">danielmusagara@gmail.com · +243 971 238 634 · WhatsApp disponible</div>
+      </div>
+    </section>
+  </main>
+</body>
+</html>

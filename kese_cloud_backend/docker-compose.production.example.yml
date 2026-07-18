@@ -1,0 +1,33 @@
+services:
+  kese-cloud-db:
+    image: mariadb:11
+    container_name: kese-cloud-db
+    restart: unless-stopped
+    environment:
+      MARIADB_DATABASE: kese_cloud
+      MARIADB_USER: kese
+      MARIADB_PASSWORD: change-me
+      MARIADB_ROOT_PASSWORD: change-root-me
+    volumes:
+      - kese-cloud-db-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  kese-cloud-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: kese-cloud-api
+    restart: unless-stopped
+    depends_on:
+      - kese-cloud-db
+    environment:
+      KESE_SECRET_KEY: change-me-in-production
+      KESE_CREATOR_USERNAME: creator
+      KESE_CREATOR_PIN: Creator@2026
+      KESE_DATABASE_URL: mysql+pymysql://kese:change-me@kese-cloud-db:3306/kese_cloud?charset=utf8mb4
+    ports:
+      - "8766:8766"
+
+volumes:
+  kese-cloud-db-data:

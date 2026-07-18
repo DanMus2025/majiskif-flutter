@@ -1,0 +1,19 @@
+services:
+  - type: web
+    name: majiskif-kese-cloud-api
+    runtime: python
+    rootDir: kese_cloud_backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: python run.py
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: KESE_SECRET_KEY
+        sync: false
+      - key: KESE_CREATOR_USERNAME
+        value: creator
+      - key: KESE_CREATOR_PIN
+        value: "2026"
+      - key: KESE_DATABASE_URL
+        sync: false
